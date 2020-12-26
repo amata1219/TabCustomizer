@@ -1,0 +1,5 @@
+name: TabCustomizer
+main: amata1219.tab.customizer.Main
+version: 1.0.0
+api-version: 1.15
+author: '@amata1219'
