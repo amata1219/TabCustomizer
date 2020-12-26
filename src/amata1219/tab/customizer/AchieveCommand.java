@@ -7,7 +7,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.util.UUID;
+
 public class AchieveCommand implements CommandExecutor {
+
+    private final PlayerAchieveRepository playerAchieveRepository;
+
+    public AchieveCommand(PlayerAchieveRepository playerAchieveRepository) {
+        this.playerAchieveRepository = playerAchieveRepository;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         /*
@@ -20,11 +29,14 @@ public class AchieveCommand implements CommandExecutor {
         if (args.length == 0) {
             //引数が一つも無い時、つまり、`/achieve` とだけ入力された時
 
+            sender.sendMessage(ChatColor.RED + "引数が不足しています。");
             //引数が不足している旨のエラーメッセージを表示する
+
             //多くのプラグインはここでコマンド一覧を表示することが多い
 
             return true;
-            //返り値がboolean型だからtrue/falseを指定する必要があるが、全てtrueで問題無い
+            //返り値がboolean型だからtrue/falseを指定する必要があるが、
+            //onCommand()内では全てtrueで問題無い(理由はDiscordで後述)
         }
 
         switch (args[0]) {
@@ -35,26 +47,23 @@ public class AchieveCommand implements CommandExecutor {
                     // `/achieve set` か `/achieve set [player-name]` までしか入力していない場合
                     //称号まで絶対に入力してもらう必要があるので、引数が不足していれば弾く
 
-                    return true;
-                }
-
-                OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                //指定されたプレイヤー名でプレイヤーを取得してみる
-                //オンラインかどうかは分からないので、in状態問わず取得出来る`getOfflinePlayer()`を使う(クラスとほぼ同義)
-
-                if (!player.hasPlayedBefore()) {
-                    //OfflinePlayer#hasPlayedBefore()はプレイヤーが一度でもサーバーに参加した事があるかどうかをbool値で返す
-                    //つまり、サーバーに参加したことのないプレイヤーでも`getOfflinePlayer()`でnullが返ってくるわけではない
+                    //エラーメッセージを送信する (sender.sendMessage(String))
 
                     return true;
                 }
 
-                String achieve = args[1];
-                //称号を取得
+                //これ以降は、プレイヤー名も称号も指定されていて、args[0]とargs[1]には、
+                //何かしらの値が入っている事が保証されている
 
-                //↑このプレイヤー取得の処理はremoveでも使うのでメソッド化しておくと良い感じ
+                UUID specifiedPlayerUniqueId = playerUniqueId(args[0]);
+                //指定されたプレイヤーのUUIDを取得する
+                //playerUniqueIdメソッドは下の方で定義している
 
-                // ---ここに称号を設定する処理--- //
+                String newAchieve = args[1];
+                //新しい称号を設定する
+
+                playerAchieveRepository.setAchieve(specifiedPlayerUniqueId, newAchieve);
+                //指定されたプレイヤーのUUIDに、新しい称号を設定する
 
                 break;
                 //Javaのswitch文はフォールスルーなのでcase毎にbreakしてswitch文を脱出しないといけない
@@ -68,11 +77,46 @@ public class AchieveCommand implements CommandExecutor {
             }
             default: {
                 //args[0]がsetでもremoveでもなかった場合
+
+                //エラーメッセージを出す
                 break;
             }
         }
 
         return true;
+    }
+
+    private static UUID playerUniqueId(String playerName) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+        /*
+            プレイヤー名からOfflinePlayer(別にオンラインでも取得できる)を取得する
+            これはサーバーに一度もログインしことがないプレイヤーであっても、
+            nullは返ってこず何らかのインスタンスが返される
+         */
+
+        return offlinePlayer.hasPlayedBefore() ? offlinePlayer.getUniqueId() : null;
+        /*
+            OfflinePlayer#hasPlayedBefore() は、プレイヤーが一度でもサーバーに参加したことが
+            あるかどうかをboolean型で返す true→参加したことがある / false→参加したことがない
+
+            参加したことがあればUUIDを返し、そうでなければnullを返す
+
+            条件式 ? trueの場合 : falseの場合
+            この形の演算子( ? : )を三項演算子という
+                → 一つ目の項 ? 二つ目の項 : 三つ目の項
+                → だから三項演算子
+
+            if (条件式) {
+                trueの場合
+            } else {
+                falseの場合
+            }
+            の簡略版
+            本当に短い処理を書く時は三項演算子を使うと綺麗に書ける
+            条件式 ? (条件式 ? true&trueの場合 : true&falseの場合) : falseの場合
+            みたいな入れ子構造にはせず、そういう時は普通にif文で書いた方が判読性が高まる
+            だから、本当に短い処理を書く時だけに使う
+         */
     }
 
 }
