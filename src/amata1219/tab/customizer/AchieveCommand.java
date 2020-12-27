@@ -11,9 +11,11 @@ import java.util.UUID;
 
 public class AchieveCommand implements CommandExecutor {
 
+    private final Main plugin;
     private final PlayerAchieveRepository playerAchieveRepository;
 
-    public AchieveCommand(PlayerAchieveRepository playerAchieveRepository) {
+    public AchieveCommand(Main plugin, PlayerAchieveRepository playerAchieveRepository) {
+        this.plugin = plugin;
         this.playerAchieveRepository = playerAchieveRepository;
     }
 
@@ -56,7 +58,7 @@ public class AchieveCommand implements CommandExecutor {
                 //これ以降は、プレイヤー名も称号も指定されていて、args[0]とargs[1]には、
                 //何かしらの値が入っている事が保証されている
 
-                UUID specifiedPlayerUniqueId = playerUniqueId(args[0]);
+                UUID specifiedPlayerUniqueId = playerUniqueId(args[1]);
                 //指定されたプレイヤーのUUIDを取得する
                 //playerUniqueIdメソッドは下の方で定義している
 
@@ -67,12 +69,13 @@ public class AchieveCommand implements CommandExecutor {
                 }
 
 
-                String newAchieve = args[1];
+                String newAchieve = args[2];
                 //新しい称号を設定する
 
                 playerAchieveRepository.setAchieve(specifiedPlayerUniqueId, newAchieve);
                 //指定されたプレイヤーのUUIDに、新しい称号を設定する
 
+                sender.sendMessage(ChatColor.GREEN + args[1] + " に " + newAchieve + "の称号を設定しました。");
                 break;
                 //Javaのswitch文はフォールスルーなのでcase毎にbreakしてswitch文を脱出しないといけない
             }
@@ -92,6 +95,11 @@ public class AchieveCommand implements CommandExecutor {
 
                 playerAchieveRepository.removeAchieve(specifiedPlayerUniqueId);
                 //プレイヤーの称号を削除する
+
+                plugin.getConfig().set(specifiedPlayerUniqueId.toString(), null);
+                plugin.saveConfig();
+
+                sender.sendMessage(ChatColor.GREEN + args[1] + " の称号を削除しました。");
                 break;
             }
             default: {

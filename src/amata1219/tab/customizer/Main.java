@@ -72,9 +72,8 @@ public class Main extends JavaPlugin {
         //PlayerListNameSwitchTask#run()を、40tick(2秒)後から、40tick(2秒)間隔で非同期に実行する
         //タスクはplayerListNameSwitchTaskで保持
 
-        getCommand("achieve").setExecutor(new AchieveCommand(playerAchieveRepository));
-
-
+        getCommand("achieve").setExecutor(new AchieveCommand(this, playerAchieveRepository));
+        //achieveコマンドの処理を登録する
     }
 
     @Override

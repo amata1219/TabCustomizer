@@ -2,6 +2,7 @@ name: TabCustomizer
 main: amata1219.tab.customizer.Main
 version: 1.0.0
 api-version: 1.15
+softdepend: [LuckPerms]
 author: '@amata1219'
 
 commands:
