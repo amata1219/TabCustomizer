@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class PlayerAchieveRepository {
 
-    private final HashMap<UUID, String> playersUniqueIdsToAchieves;
+    final HashMap<UUID, String> playersUniqueIdsToAchieves;
 
     public PlayerAchieveRepository(HashMap<UUID, String> playerUniqueIdsToAchieves) {
         this.playersUniqueIdsToAchieves = playerUniqueIdsToAchieves;

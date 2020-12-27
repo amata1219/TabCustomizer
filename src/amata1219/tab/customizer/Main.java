@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Main extends JavaPlugin {
@@ -67,9 +68,13 @@ public class Main extends JavaPlugin {
         //読み込んだデータをPlayerAchieveRepositoryに渡す
         //PlayerAchieveRepositoryはフィールド(クラス変数)を利用して保持する
 
-        playerListNameSwitchTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayerListNameSwitchTask(this), 40L, 40L);
+        playerListNameSwitchTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayerListNameSwitchTask(this, playerAchieveRepository), 40L, 40L);
         //PlayerListNameSwitchTask#run()を、40tick(2秒)後から、40tick(2秒)間隔で非同期に実行する
         //タスクはplayerListNameSwitchTaskで保持
+
+        getCommand("achieve").setExecutor(new AchieveCommand(playerAchieveRepository));
+
+
     }
 
     @Override
@@ -78,6 +83,17 @@ public class Main extends JavaPlugin {
 
         playerListNameSwitchTask.cancel();
         //保持しておいたタスクをキャンセル
+
+        for (Map.Entry<UUID, String> playerUniqueIdToAchieve : playerAchieveRepository.playersUniqueIdsToAchieves.entrySet()) {
+            String key = playerUniqueIdToAchieve.getKey().toString();
+            //UUIDはtoString()でStringに変換する
+
+            getConfig().set(key, playerUniqueIdToAchieve.getValue());
+            //コンフィグに書き込みをする
+        }
+
+        saveConfig();
+        //コンフィグをセーブする
     }
 
     public static Main instance() {

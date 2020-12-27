@@ -9,9 +9,11 @@ import java.util.HashMap;
 public class PlayerListNameSwitchTask implements Runnable {
 
     private final JavaPlugin plugin;
+    private final PlayerAchieveRepository playerAchieveRepository;
 
-    public PlayerListNameSwitchTask(JavaPlugin plugin) {
+    public PlayerListNameSwitchTask(JavaPlugin plugin, PlayerAchieveRepository playerAchieveRepository) {
         this.plugin = plugin;
+        this.playerAchieveRepository = playerAchieveRepository;
     }
 
     @Override
@@ -20,7 +22,9 @@ public class PlayerListNameSwitchTask implements Runnable {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             playersToOriginalPlayerListNames.put(player, player.getPlayerListName());
-            player.setPlayerListName("NewName");
+
+            String playerAchieve = playerAchieveRepository.achieve(player.getUniqueId());
+            if (playerAchieve != null) player.setPlayerListName(playerAchieve);
         }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
