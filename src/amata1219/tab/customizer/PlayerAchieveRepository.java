@@ -17,8 +17,8 @@ public class PlayerAchieveRepository {
     }
 
     //プレイヤーのUUIDに称号を紐づける(put)
-    public void setAchieve(UUID playerUniqueId, String achieve) {
-        playersUniqueIdsToAchieves.put(playerUniqueId, achieve);
+    public void setAchieve(UUID playerUniqueId, String newAchieve) {
+        playersUniqueIdsToAchieves.put(playerUniqueId, newAchieve);
     }
 
     //プレイヤーの称号を削除する(remove)
