@@ -68,7 +68,7 @@ public class Main extends JavaPlugin {
         //読み込んだデータをPlayerAchieveRepositoryに渡す
         //PlayerAchieveRepositoryはフィールド(クラス変数)を利用して保持する
 
-        playerListNameSwitchTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayerListNameSwitchTask(this, playerAchieveRepository), 40L, 40L);
+        playerListNameSwitchTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlayerListNameSwitchTask(this, playerAchieveRepository), 80L, 80L);
         //PlayerListNameSwitchTask#run()を、40tick(2秒)後から、40tick(2秒)間隔で非同期に実行する
         //タスクはplayerListNameSwitchTaskで保持
 

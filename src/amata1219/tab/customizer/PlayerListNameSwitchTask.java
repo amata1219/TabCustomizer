@@ -24,7 +24,9 @@ public class PlayerListNameSwitchTask implements Runnable {
             playersToOriginalPlayerListNames.put(player, player.getPlayerListName());
 
             String playerAchieve = playerAchieveRepository.achieve(player.getUniqueId());
-            if (playerAchieve != null) player.setPlayerListName(playerAchieve);
+            if (playerAchieve != null) {
+                player.setPlayerListName(playerAchieve);
+            }
         }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -34,6 +36,7 @@ public class PlayerListNameSwitchTask implements Runnable {
                     player.setPlayerListName(originalPlayerListName);
                 }
             }
-        }, 20L);
+        }, 40L);
     }
+
 }

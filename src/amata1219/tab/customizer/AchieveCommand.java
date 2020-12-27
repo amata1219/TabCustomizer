@@ -72,10 +72,12 @@ public class AchieveCommand implements CommandExecutor {
                 String newAchieve = args[2];
                 //新しい称号を設定する
 
+                newAchieve = ChatColor.translateAlternateColorCodes('&', newAchieve);
+
                 playerAchieveRepository.setAchieve(specifiedPlayerUniqueId, newAchieve);
                 //指定されたプレイヤーのUUIDに、新しい称号を設定する
 
-                sender.sendMessage(ChatColor.GREEN + args[1] + " に " + newAchieve + "の称号を設定しました。");
+                sender.sendMessage(ChatColor.GREEN + args[1] + " に " + newAchieve + " の称号を設定しました。");
                 break;
                 //Javaのswitch文はフォールスルーなのでcase毎にbreakしてswitch文を脱出しないといけない
             }
@@ -97,6 +99,8 @@ public class AchieveCommand implements CommandExecutor {
                 //プレイヤーの称号を削除する
 
                 plugin.getConfig().set(specifiedPlayerUniqueId.toString(), null);
+                //コンフィグからデータを削除する
+
                 plugin.saveConfig();
 
                 sender.sendMessage(ChatColor.GREEN + args[1] + " の称号を削除しました。");

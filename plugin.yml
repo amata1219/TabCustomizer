@@ -6,5 +6,7 @@ softdepend: [LuckPerms]
 author: '@amata1219'
 
 commands:
+
   achieve:
+
     permission: tab.customizer.achieve
